@@ -37,10 +37,10 @@ def non_mail_address(s):
 
 
 def send_mail(data):
-    sender = app.config['MAIL_DEFAULT_SENDER']
+    recipient = app.config['MAIL_RECIPIENT']
     subject = '{} {} has sent you a mail'.format(
         data.first_name, data.last_name)
-    msg = Message(subject=subject, sender=sender, recipients=[data.email])
+    msg = Message(subject=subject, sender=data.email, recipients=[recipient])
     msg.body = data.message
     mail.send(msg)
 

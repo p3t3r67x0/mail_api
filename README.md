@@ -24,7 +24,7 @@ MAIL_USERNAME = 'username@gmail.com'
 MAIL_PASSWORD = 'super_secure_password'
 MAIL_USE_TLS = False
 MAIL_USE_SSL = True
-MAIL_DEFAULT_SENDER = 'me@example.com'
+MAIL_RECIPIENT = 'me@example.com'
 ```
 
 
