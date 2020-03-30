@@ -50,7 +50,7 @@ After=network.target
 [Service]
 User=<user>
 Group=www-data
-WorkingDirectory=/home/<user>/git/mail_api
+WorkingDirectory=/home/<user>/git/mail_api/api
 Environment="PATH=/home/<user>/git/mail_api/venv/bin"
 ExecStart=/home/<user>/git/mail_api/venv/bin/gunicorn --bind 127.0.0.1:5000 wsgi:app --workers 4 --threads 2 --access-logfile /var/log/mailapi/access.log --error-logfile /var/log/mailapi/error.log --log-level INFO
 Restart=on-failure
