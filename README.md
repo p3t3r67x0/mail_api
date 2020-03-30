@@ -3,6 +3,13 @@
 This tool comes handy when you want to deploy mail API.
 
 
+## Example
+
+```bash
+curl -X POST https://example.com/api/v1/mail -d '{"first_name":"Jane","last_name":"Doe","message":"Hey how are you doing?","email":"me@example.com"}' -H "Content-Type: application/json"
+```
+
+
 ## Prerequisites
 
 Create a `.config` file in the `/api` folder
