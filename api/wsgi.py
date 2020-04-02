@@ -69,6 +69,7 @@ class Settings(db.Model):
 
 class User(db.Model):
     id = db.Column(db.String(80), primary_key=True)
+    name = db.Column(db.String(80), nullable=False)
     password = db.Column(db.String(80), nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     created = db.Column(db.DateTime, default=datetime.utcnow)
@@ -99,6 +100,8 @@ class SignupEndpoint(Resource):
         self.reqparse = reqparse.RequestParser(bundle_errors=True)
 
         self.reqparse.add_argument(
+            'name', type=non_empty_string, required=True, help='No valid name provided', location='json', nullable=False)
+        self.reqparse.add_argument(
             'email', type=non_mail_address, required=True, help='No valid email provided', location='json', nullable=False)
         self.reqparse.add_argument(
             'password', type=non_empty_string, required=True, help='No message body provided', location='json', nullable=False)
@@ -116,9 +119,9 @@ class SignupEndpoint(Resource):
             db.session.add(user)
             db.session.commit()
 
-            return {'message': 'You signed up successfully, please check your mail'}
+            return {'message': 'You signed up successfully'}
         except IntegrityError as e:
-            return {'message': 'User with given email address already exists'}, 409
+            return {'message': 'Email address already exists'}, 409
 
 
 class LoginEndpoint(Resource):
@@ -128,7 +131,7 @@ class LoginEndpoint(Resource):
         self.reqparse.add_argument(
             'email', type=non_mail_address, required=True, help='No valid email provided', location='json', nullable=False)
         self.reqparse.add_argument(
-            'password', type=non_empty_string, required=True, help='No message body provided', location='json', nullable=False)
+            'password', type=non_empty_string, required=True, help='No valid password provided', location='json', nullable=False)
 
         super(LoginEndpoint, self).__init__()
 
