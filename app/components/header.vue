@@ -27,11 +27,11 @@
           <li v-on:click="toggleNav" class="border-b lg:border-b-2 border-gray-800 lg:border-transparent lg:hover:border-white">
             <nuxt-link to="/" class="block py-3 px-3 lg:p-4 focus:outline-none hover:bg-gray-800 lg:hover:bg-transparent">tbd</nuxt-link>
           </li>
-          <li v-on:click="toggleNav" class="border-b lg:border-b-2 border-gray-800 lg:border-transparent lg:hover:border-white">
-            <nuxt-link to="/" class="block py-3 px-3 lg:p-4 focus:outline-none hover:bg-gray-800 lg:hover:bg-transparent">tbd</nuxt-link>
+          <li v-if="userId" v-on:click="toggleNav" class="border-b lg:border-b-2 border-gray-800 lg:border-transparent lg:hover:border-white">
+            <nuxt-link to="/account/overview" class="block py-3 px-3 lg:p-4 focus:outline-none hover:bg-gray-800 lg:hover:bg-transparent">Overview</nuxt-link>
           </li>
-          <li v-on:click="toggleNav" class="border-b lg:border-b-2 border-gray-800 lg:border-transparent lg:hover:border-white">
-            <nuxt-link to="/overview" class="block py-3 px-3 lg:p-4 focus:outline-none hover:bg-gray-800 lg:hover:bg-transparent">Overview</nuxt-link>
+          <li v-if="userId" v-on:click="toggleNav" class="border-b lg:border-b-2 border-gray-800 lg:border-transparent lg:hover:border-white">
+            <a @click="logoutSubmit" class="cursor-pointer block py-3 px-3 lg:p-4 focus:outline-none hover:bg-gray-800 lg:hover:bg-transparent">Logout</a>
           </li>
         </ul>
       </div>
@@ -41,10 +41,17 @@
 </template>
 
 <script>
+const Cookie = require('js-cookie')
+
 export default {
   data() {
     return {
       showNav: false,
+    }
+  },
+  computed: {
+    userId() {
+      return this.$store.state.userId
     }
   },
   methods: {
@@ -53,6 +60,19 @@ export default {
     },
     toggleNav() {
       return this.showNav = !this.showNav
+    },
+    logoutSubmit() {
+      this.$store.commit('updateUserId', null)
+      this.$store.commit('updateAccessToken', null)
+      this.$store.commit('updateRefreshToken', null)
+
+      Cookie.remove('USER_ID')
+      Cookie.remove('USER_ACCESS_TOKEN')
+      Cookie.remove('USER_REFRESH_TOKEN')
+
+      this.$router.push({
+        name: 'login'
+      })
     }
   }
 }

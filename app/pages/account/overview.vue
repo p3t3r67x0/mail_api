@@ -20,7 +20,7 @@
             <h3 class="font-bold">SMTP Port</h3>
             <p>{{ item.smtp_port }}</p>
           </div>
-          <div class="lg:w-1/6">
+          <div class="lg:w-1/6 mb-2 lg:mb-0">
             <p class="lg:text-right lg:mt-4">
               <nuxt-link v-bind:to="generateLink(item.id)" class="bg-blue-500 hover:bg-blue-600 focus:outline-none rounded text-white text-sm font-medium tracking-wide p-2 mr-1">Edit</nuxt-link>
               <a v-on:click="deleteSettings(item.id, index)" class="cursor-pointer bg-red-500 hover:bg-red-600 focus:outline-none rounded text-white text-sm font-medium tracking-wide p-2">Delete</a>
@@ -41,20 +41,26 @@ export default {
     }
   },
   created() {
-    this.$axios.$get('http://localhost:5000/api/v1/settings/u/b08738998a89').then(res => {
+    this.$axios.$get('http://localhost:5000/api/v1/settings/u/' + this.userId).then(res => {
       this.results = res
     }).catch(error => {
       console.log(error)
     })
   },
+  computed: {
+    userId() {
+      return this.$store.state.userId
+    }
+  },
+  middleware: 'auth',
   methods: {
     generateLink(id) {
-      return '/settings/' + id
+      return '/account/settings/' + id
     },
     createSettings() {
-      this.$axios.$post('http://localhost:5000/api/v1/settings/u/b08738998a89').then(res => {
+      this.$axios.$post('http://localhost:5000/api/v1/settings/u/' + this.userId).then(res => {
         this.$router.push({
-          name: 'settings-id',
+          name: 'account-settings-id',
           params: {
             id: res.id
           }

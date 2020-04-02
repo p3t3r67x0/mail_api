@@ -33,7 +33,13 @@ export default {
   plugins: [{
     src: "@/plugins/vClickOutside",
     ssr: false
+  }, {
+    src: "@/plugins/axiosInterceptors",
+    ssr: true
   }],
+  router: {
+    middleware: 'router'
+  },
   buildModules: [
     // Doc: https://github.com/nuxt-community/nuxt-tailwindcss
     '@nuxtjs/tailwindcss',

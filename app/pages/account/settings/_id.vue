@@ -114,7 +114,7 @@
         <button class="bg-blue-500 hover:bg-blue-600 focus:outline-none rounded text-white text-sm font-medium tracking-wide p-2 mr-2" type="submit">
           Save
         </button>
-        <nuxt-link to="/overview" class="bg-teal-500 hover:bg-teal-600 focus:outline-none rounded text-white text-sm font-medium tracking-wide p-2">
+        <nuxt-link to="/account/overview" class="bg-teal-500 hover:bg-teal-600 focus:outline-none rounded text-white text-sm font-medium tracking-wide p-2">
           Back
         </nuxt-link>
       </p>
@@ -240,6 +240,7 @@ export default {
       }
     }
   },
+  middleware: 'auth',
   methods: {
     submitForm: function(e) {
       const isValidForm = (currentValue) => currentValue !== true
@@ -278,16 +279,16 @@ export default {
 
       if (Object.values(this.errors).every(isValidForm) === true) {
         this.$axios.$put('http://localhost:5000/api/v1/settings/i/' + this.settingsId, {
-          "use_ssl": this.settings.use_ssl,
-          "use_tls": this.settings.use_tls,
-          "secret": this.settings.secret.trim(),
-          "username": this.settings.username.trim(),
-          "password": this.settings.password.trim(),
-          "recipient": this.settings.recipient.trim(),
-          "first_name": this.settings.first_name.trim(),
-          "last_name": this.settings.last_name.trim(),
-          "smtp_server": this.settings.smtp_server.trim(),
-          "smtp_port": this.settings.smtp_port.trim()
+          'use_ssl': this.settings.use_ssl,
+          'use_tls': this.settings.use_tls,
+          'secret': this.settings.secret.trim(),
+          'username': this.settings.username.trim(),
+          'password': this.settings.password.trim(),
+          'recipient': this.settings.recipient.trim(),
+          'first_name': this.settings.first_name.trim(),
+          'last_name': this.settings.last_name.trim(),
+          'smtp_server': this.settings.smtp_server.trim(),
+          'smtp_port': this.settings.smtp_port.trim()
         }).then(res => {
           this.response = res.message
           this.showResponse = true
