@@ -46,6 +46,7 @@ export default {
   ],
   modules: [
     '@nuxtjs/axios',
+    '@nuxtjs/dotenv',
     ['nuxt-fontawesome', {
       component: 'fa',
       imports: [{

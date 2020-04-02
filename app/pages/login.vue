@@ -68,6 +68,14 @@ export default {
     loginSubmit() {
       const isValidForm = (currentValue) => currentValue !== true
 
+      Cookie.remove('USER_ID')
+      Cookie.remove('USER_ACCESS_TOKEN')
+      Cookie.remove('USER_REFRESH_TOKEN')
+
+      this.$store.commit('updateUserId', null)
+      this.$store.commit('updateAccessToken', null)
+      this.$store.commit('updateRefreshToken', null)
+
       if (!this.email) {
         this.errors.email = true
       }
@@ -99,9 +107,6 @@ export default {
           } else {
             this.response = error.message
           }
-
-          this.$store.commit('updateUserId', null)
-          this.$store.commit('updateAccessToken', null)
         })
       }
     }
