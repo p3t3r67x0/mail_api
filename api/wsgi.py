@@ -61,8 +61,8 @@ class Settings(db.Model):
     smtp_server = db.Column(db.String(80), nullable=False)
     password = db.Column(db.String(80), nullable=False)
     secret = db.Column(db.String(240), nullable=False)
-    use_ssl = db.Column(db.Boolean, nullable=False)
-    use_tls = db.Column(db.Boolean, nullable=False)
+    use_ssl = db.Column(db.Boolean, default=False, nullable=False)
+    use_tls = db.Column(db.Boolean, default=True, nullable=False)
     created = db.Column(db.DateTime, default=datetime.utcnow)
     updated = db.Column(db.DateTime)
 
@@ -141,6 +141,10 @@ class LoginEndpoint(Resource):
 
         try:
             user = User.query.filter_by(email=args.email).first()
+
+            if not user:
+                return {'message': 'Error invalid email or password'}, 401
+
             authorized = user.check_password(args.password)
 
             if not authorized:
@@ -149,7 +153,7 @@ class LoginEndpoint(Resource):
             access_token = create_access_token(
                 identity=user.email, expires_delta=timedelta(days=7))
 
-            return {'token': access_token, 'message': 'You are successfully loged in'}
+            return {'access_token': access_token, 'user_id': user.id}
         except Exception as e:
             raise e
             return {'message': 'Error invalid email or password'}, 401
@@ -182,6 +186,7 @@ class SettingsByIdEnpoint(Resource):
 
         super(SettingsByIdEnpoint, self).__init__()
 
+    @jwt_required
     def get(self, id):
         settings = Settings.query.filter_by(id=id).first()
 
@@ -199,6 +204,7 @@ class SettingsByIdEnpoint(Resource):
                 'use_ssl': settings.use_ssl,
                 'use_tls': settings.use_tls}
 
+    @jwt_required
     def delete(self, id):
         settings = Settings.query.filter_by(id=id).first()
 
@@ -210,6 +216,7 @@ class SettingsByIdEnpoint(Resource):
 
         return {'message': 'Successfully deleted resource settings'}
 
+    @jwt_required
     def put(self, id):
         args = self.reqparse.parse_args()
 
@@ -239,32 +246,7 @@ class SettingsByIdEnpoint(Resource):
 
 
 class SettingsByUserIdEnpoint(Resource):
-    def __init__(self):
-        self.reqparse = reqparse.RequestParser(bundle_errors=True)
-
-        self.reqparse.add_argument(
-            'recipient', type=non_mail_address, required=True, help='No valid email provided', location='json', nullable=False)
-        self.reqparse.add_argument(
-            'username', type=non_empty_string, required=True, help='No username provided', location='json', nullable=False)
-        self.reqparse.add_argument(
-            'first_name', type=non_empty_string, required=True, help='No first name provided', location='json', nullable=False)
-        self.reqparse.add_argument(
-            'last_name', type=non_empty_string, required=True, help='No last name provided', location='json', nullable=False)
-        self.reqparse.add_argument(
-            'secret', type=non_empty_string, required=True, help='No secret provided', location='json', nullable=False)
-        self.reqparse.add_argument(
-            'password', type=non_empty_string, required=True, help='No password provided', location='json', nullable=False)
-        self.reqparse.add_argument(
-            'smtp_port', type=non_empty_string, required=True, help='No smtp port provided', location='json', nullable=False)
-        self.reqparse.add_argument(
-            'smtp_server', type=non_empty_string, required=True, help='No smtp server provided', location='json', nullable=False)
-        self.reqparse.add_argument(
-            'use_ssl', type=inputs.boolean, required=True, help='No flag ssl provided', location='json', nullable=False)
-        self.reqparse.add_argument(
-            'use_tls', type=inputs.boolean, required=True, help='No flag tls provided', location='json', nullable=False)
-
-        super(SettingsByUserIdEnpoint, self).__init__()
-
+    @jwt_required
     def get(self, user_id):
         settings = Settings.query.filter_by(user_id=user_id).all()
         results = []
@@ -288,18 +270,26 @@ class SettingsByUserIdEnpoint(Resource):
 
         return results
 
+    @jwt_required
     def post(self, user_id):
-        args = self.reqparse.parse_args()
+        settings = Settings()
 
-        settings = Settings(**args)
         settings.id = create_id()
         settings.user_id = user_id
+        settings.recipient = ''
+        settings.first_name = ''
+        settings.last_name = ''
+        settings.smtp_port = ''
+        settings.smtp_server = ''
+        settings.password = ''
+        settings.username = ''
+        settings.secret = ''
 
         try:
             db.session.add(settings)
             db.session.commit()
 
-            return {'message': 'Successfully created resource settings'}
+            return {'message': 'Successfully created resource settings', 'id': settings.id}
         except IntegrityError as e:
             return {'message': e.args}
 
