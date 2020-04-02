@@ -18,11 +18,11 @@
 
       <div v-bind:class="[showNav ? 'block z-50' : 'hidden']" class="w-full border-t lg:border-0 border-gray-800 mt-2 lg:mt-0 lg:flex lg:items-center lg:w-auto">
         <ul class="lg:flex items-center justify-between text-base text-white pt-0 lg:pt-0">
-          <li v-on:click="toggleNav" class="border-b lg:border-b-2 border-gray-800 lg:border-transparent lg:hover:border-white">
-            <nuxt-link to="/" class="block py-3 px-3 lg:p-4 focus:outline-none hover:bg-gray-800 lg:hover:bg-transparent">tbd</nuxt-link>
+          <li v-if="!userId" v-on:click="toggleNav" class="border-b lg:border-b-2 border-gray-800 lg:border-transparent lg:hover:border-white">
+            <nuxt-link to="/login" class="block py-3 px-3 lg:p-4 focus:outline-none hover:bg-gray-800 lg:hover:bg-transparent">Login</nuxt-link>
           </li>
-          <li v-on:click="toggleNav" class="border-b lg:border-b-2 border-gray-800 lg:border-transparent lg:hover:border-white">
-            <nuxt-link to="/" class="block py-3 px-3 lg:p-4 focus:outline-none hover:bg-gray-800 lg:hover:bg-transparent">tbd</nuxt-link>
+          <li v-if="!userId" v-on:click="toggleNav" class="border-b lg:border-b-2 border-gray-800 lg:border-transparent lg:hover:border-white">
+            <nuxt-link to="/signup" class="block py-3 px-3 lg:p-4 focus:outline-none hover:bg-gray-800 lg:hover:bg-transparent">Signup</nuxt-link>
           </li>
           <li v-on:click="toggleNav" class="border-b lg:border-b-2 border-gray-800 lg:border-transparent lg:hover:border-white">
             <nuxt-link to="/" class="block py-3 px-3 lg:p-4 focus:outline-none hover:bg-gray-800 lg:hover:bg-transparent">tbd</nuxt-link>
