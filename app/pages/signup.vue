@@ -101,7 +101,7 @@ export default {
       }
 
       if (Object.values(this.errors).every(isValidForm) === true) {
-        this.$axios.$post('http://localhost:5000/api/v1/signup', {
+        this.$axios.$post(process.env.API_URL + '/api/v1/signup', {
           'name': this.name.trim(),
           'email': this.email.trim(),
           'password': this.password.trim()

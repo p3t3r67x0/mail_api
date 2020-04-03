@@ -41,10 +41,14 @@ export default {
     }
   },
   created() {
-    this.$axios.$get('http://localhost:5000/api/v1/settings/u/' + this.userId).then(res => {
+    this.$axios.$get(process.env.API_URL + '/api/v1/settings/u/' + this.userId).then(res => {
       this.results = res
     }).catch(error => {
-      console.log(error)
+      if (error.hasOwnProperty('response')) {
+        console.log(error.response.data)
+      } else {
+        console.log(error.message)
+      }
     })
   },
   computed: {
@@ -58,7 +62,7 @@ export default {
       return '/account/settings/' + id
     },
     createSettings() {
-      this.$axios.$post('http://localhost:5000/api/v1/settings/u/' + this.userId).then(res => {
+      this.$axios.$post(process.env.API_URL + '/api/v1/settings/u/' + this.userId).then(res => {
         this.$router.push({
           name: 'account-settings-id',
           params: {
@@ -66,15 +70,22 @@ export default {
           }
         })
       }).catch(error => {
-        console.log(error)
+        if (error.hasOwnProperty('response')) {
+          console.log(error.response.data)
+        } else {
+          console.log(error.message)
+        }
       })
     },
     deleteSettings(settingsId, index) {
-      this.$axios.$delete('http://localhost:5000/api/v1/settings/i/' + settingsId).then(res => {
+      this.$axios.$delete(process.env.API_URL + '/api/v1/settings/i/' + settingsId).then(res => {
         this.results.splice(index)
-        console.log(res)
       }).catch(error => {
-        console.log(error)
+        if (error.hasOwnProperty('response')) {
+          console.log(error.response.data)
+        } else {
+          console.log(error.message)
+        }
       })
     }
   }

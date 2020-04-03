@@ -160,7 +160,7 @@ export default {
     }
   },
   created() {
-    this.$axios.$get('http://localhost:5000/api/v1/settings/i/' + this.settingsId).then(res => {
+    this.$axios.$get(process.env.API_URL + '/api/v1/settings/i/' + this.settingsId).then(res => {
       this.settings = res
     }).catch(error => {
       console.log(error)
@@ -278,7 +278,7 @@ export default {
       }
 
       if (Object.values(this.errors).every(isValidForm) === true) {
-        this.$axios.$put('http://localhost:5000/api/v1/settings/i/' + this.settingsId, {
+        this.$axios.$put(process.env.API_URL + '/api/v1/settings/i/' + this.settingsId, {
           'use_ssl': this.settings.use_ssl,
           'use_tls': this.settings.use_tls,
           'secret': this.settings.secret.trim(),
@@ -293,7 +293,11 @@ export default {
           this.response = res.message
           this.showResponse = true
         }).catch(error => {
-          console.log(error)
+          if (error.hasOwnProperty('response')) {
+            console.log(error.response.data)
+          } else {
+            console.log(error.message)
+          }
         })
       }
 
