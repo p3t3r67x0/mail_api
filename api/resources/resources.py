@@ -241,7 +241,7 @@ class MailEndpoint(Resource):
         self.reqparse.add_argument(
             'last_name', type=non_empty_string, required=True, help='No last name provided', location='json', nullable=False)
 
-        super(MailEnpoint, self).__init__()
+        super(MailEndpoint, self).__init__()
 
     def post(self):
         send_mail(self.reqparse.parse_args())
