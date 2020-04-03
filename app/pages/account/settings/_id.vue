@@ -28,7 +28,7 @@
             Username
           </label>
           <input name="username" v-model="settings.username" v-bind:class="{'border-red-500': errors.username}" class="appearance-none block w-full bg-gray-200 text-gray-700 border rounded p-3 mb-1 leading-tight focus:outline-none focus:bg-white" id="username"
-            type="text" placeholder="Jane">
+            type="text" placeholder="smtp@example.com">
           <p v-if="errors.username" class="text-red-500 text-xs italic">Please fill out this field.</p>
         </div>
         <div class="w-full md:w-1/2 px-3">
@@ -36,7 +36,7 @@
             Password
           </label>
           <input name="password" v-model="settings.password" v-bind:class="{'border-red-500': errors.password}" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded p-3 mb-1 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-            id="password" type="text" placeholder="Doe">
+            id="password" type="text" placeholder="••••••••">
           <p v-if="errors.password" class="text-red-500 text-xs italic">Please fill out this field.</p>
         </div>
       </div>
@@ -46,7 +46,7 @@
             Recipient
           </label>
           <input name="recipient" v-model="settings.recipient" v-bind:class="{'border-red-500': errors.recipient}" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded p-3 mb-1 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-            id="recipient" type="text">
+            id="recipient" type="text" placeholder="me@example.com">
           <p v-if="errors.recipient" class="text-red-500 text-xs italic">Please enter a valid recipient address.</p>
         </div>
         <div class="w-full md:w-1/2 px-3">
@@ -54,7 +54,7 @@
             Secret
           </label>
           <input name="secret" v-model="settings.secret" v-bind:class="{'border-red-500': errors.secret}" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded p-3 mb-1 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-            id="secret" type="text">
+            id="secret" type="text" placeholder="••••••••">
           <p v-if="errors.secret" class="text-red-500 text-xs italic">Please fill out this field.</p>
         </div>
       </div>
@@ -64,7 +64,7 @@
             SMTP Port
           </label>
           <input name="smtp_port" v-model="settings.smtp_port" v-bind:class="{'border-red-500': errors.smtp_port}" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded p-3 mb-1 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-            id="smtp_port" type="text">
+            id="smtp_port" type="text" placeholder="25">
           <p v-if="errors.smtp_port" class="text-red-500 text-xs italic">Please fill out this field.</p>
         </div>
         <div class="w-full md:w-1/2 px-3">
@@ -72,7 +72,7 @@
             SMTP Server
           </label>
           <input name="smtp" v-model="settings.smtp_server" v-bind:class="{'border-red-500': errors.smtp_server}" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded p-3 mb-1 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-            id="smtp" type="text">
+            id="smtp" type="text" placeholder="smtp.example.com">
           <p v-if="errors.smtp_server" class="text-red-500 text-xs italic">Please fill out this field.</p>
         </div>
       </div>
@@ -151,7 +151,7 @@ export default {
         first_name: false,
         last_name: false,
       },
-      recipientRegex: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+      emailRegex: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
     }
   },
   computed: {
@@ -187,7 +187,7 @@ export default {
     },
     'settings.recipient': function() {
       if (this.settings.recipient.trim() !== '') {
-        if (this.recipientRegex.test(this.settings.recipient.trim())) {
+        if (this.emailRegex.test(this.settings.recipient.trim())) {
           this.errors.recipient = false
         } else {
           this.errors.recipient = true
@@ -196,7 +196,7 @@ export default {
     },
     'settings.username': function() {
       if (this.settings.username.trim() !== '') {
-        if (this.settings.username.trim().length > 2) {
+        if (this.emailRegex.test(this.settings.username.trim())) {
           this.errors.username = false
         } else {
           this.errors.username = true
@@ -205,7 +205,7 @@ export default {
     },
     'settings.password': function() {
       if (this.settings.password.trim() !== '') {
-        if (this.settings.password.trim().length > 2) {
+        if (this.settings.password.trim().length > 8) {
           this.errors.password = false
         } else {
           this.errors.password = true
@@ -223,7 +223,7 @@ export default {
     },
     'settings.smtp_port': function() {
       if (this.settings.smtp_port.trim() !== '') {
-        if (this.settings.smtp_port.trim().length > 2) {
+        if (this.settings.smtp_port.trim().length > 1) {
           this.errors.smtp_port = false
         } else {
           this.errors.smtp_port = true
