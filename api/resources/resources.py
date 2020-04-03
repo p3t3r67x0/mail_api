@@ -6,12 +6,16 @@ from sqlalchemy.exc import IntegrityError
 from flask import jsonify, request, g
 from flask_restful import Resource, reqparse, inputs
 from flask_jwt_extended import create_access_token, create_refresh_token, jwt_required, jwt_refresh_token_required, get_jwt_identity, decode_token, get_raw_jwt
+from itsdangerous import URLSafeTimedSerializer, BadSignature, BadTimeSignature, SignatureExpired
 
 from models.users import UserModel
 from models.settings import SettingsModel
 from utils.utils import non_empty_string, non_mail_address, create_id, send_mail
 from utils.mails import send_reset_password_mail
 from app import app, db
+
+
+serializer = URLSafeTimedSerializer(app.config['SECRET_KEY'])
 
 
 class TokenRefreshEndpoint(Resource):
@@ -118,6 +122,45 @@ class ResetPasswordEndpoint(Resource):
                 return {'message': 'Error please try again'}, 500
 
             return {'message': 'Please check your inbox'}
+        except Exception as e:
+            raise
+
+
+class ChangePasswordEndpoint(Resource):
+    def __init__(self):
+        self.reqparse = reqparse.RequestParser(bundle_errors=True)
+
+        self.reqparse.add_argument(
+            'password', type=non_empty_string, required=True, help='No valid password provided', location='json', nullable=False)
+        self.reqparse.add_argument(
+            'token', type=non_empty_string, required=True, help='No valid token provided', location='json', nullable=False)
+
+        super(ChangePasswordEndpoint, self).__init__()
+
+    def put(self):
+        args = self.reqparse.parse_args()
+        salt = app.config['SECRET_SALT']
+
+        try:
+            email = serializer.loads(args.token, salt=salt, max_age=7200)
+        except SignatureExpired as e:
+            return {'message': 'Token expired try forgot password'}, 401
+        except BadTimeSignature as e:
+            return {'message': 'Unknown error try forgot password'}, 400
+        except BadSignature as e:
+            return {'message': 'Invalid token try forgot password'}, 422
+
+        try:
+            user = UserModel.find_by_email(email)
+
+            if not user:
+                return {'message': 'Email address was not found'}, 404
+
+            user.password = args.password
+            user.hash_password()
+            user.update_user()
+
+            return {'message': 'Successfully updated password'}
         except Exception as e:
             raise
 

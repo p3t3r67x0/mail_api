@@ -16,7 +16,7 @@ def send_reset_password_mail(user):
     subject = '{} reset your password'.format(user.name)
     msg = Message(subject=subject, sender=sender, recipients=[user.email])
 
-    msg.body = 'Hello {}\n\nwith this mail we send you the link to reset your password for your MailAPI account.\n\n{}/confirm/{}'.format(
+    msg.body = 'Hello {}\n\nwith this mail we send you the link to reset your password for your MailAPI account.\n\n{}/change/{}\n\nBest regards\nMailAPI Team'.format(
         user.name, frontend_url, confirm_token)
 
     mail.send(msg)
