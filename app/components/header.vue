@@ -4,7 +4,7 @@
     <header class="flex flex-wrap items-center">
       <div class="flex-1 flex justify-between items-center py-2 pl-3 lg:pl-0">
         <nuxt-link to="/" class="text-blue-100 hover:text-white focus:outline-none text-lg font-bold">
-          <fa :icon="['fas', 'mail-bulk']" class="text-gray-400 text-3xl w-10 mr-3" />
+          <fa :icon="['fas', 'mail-bulk']" class="inline text-gray-400 text-3xl w-10 mr-3" />
           <span class="text-2xl text-gray-400 font-light">MailAPI</span>
         </nuxt-link>
       </div>
