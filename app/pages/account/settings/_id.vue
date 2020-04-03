@@ -36,7 +36,7 @@
             Password
           </label>
           <input name="password" v-model="settings.password" v-bind:class="{'border-red-500': errors.password}" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded p-3 mb-1 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-            id="password" type="text" placeholder="••••••••">
+            id="password" type="password" placeholder="••••••••">
           <p v-if="errors.password" class="text-red-500 text-xs italic">Please fill out this field.</p>
         </div>
       </div>
@@ -47,14 +47,14 @@
           </label>
           <input name="recipient" v-model="settings.recipient" v-bind:class="{'border-red-500': errors.recipient}" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded p-3 mb-1 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
             id="recipient" type="text" placeholder="me@example.com">
-          <p v-if="errors.recipient" class="text-red-500 text-xs italic">Please enter a valid recipient address.</p>
+          <p v-if="errors.recipient" class="text-red-500 text-xs italic">Please enter a valid recipient.</p>
         </div>
         <div class="w-full md:w-1/2 px-3">
           <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2" for="secret">
             Secret
           </label>
           <input name="secret" v-model="settings.secret" v-bind:class="{'border-red-500': errors.secret}" class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded p-3 mb-1 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-            id="secret" type="text" placeholder="••••••••">
+            id="secret" type="password" placeholder="••••••••">
           <p v-if="errors.secret" class="text-red-500 text-xs italic">Please fill out this field.</p>
         </div>
       </div>
@@ -205,7 +205,7 @@ export default {
     },
     'settings.password': function() {
       if (this.settings.password.trim() !== '') {
-        if (this.settings.password.trim().length > 8) {
+        if (this.settings.password.trim().length > 7) {
           this.errors.password = false
         } else {
           this.errors.password = true

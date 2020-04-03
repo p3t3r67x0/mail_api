@@ -12,7 +12,7 @@
       <p v-if="errors.email" class="text-red-500 text-xs italic">Please enter a valid email.</p>
     </div>
     <p class="text-right">
-      <button class="cursor-pointer bg-blue-500 hover:bg-blue-600 focus:outline-none rounded text-white text-sm font-medium tracking-wide p-2" type="submit">Login</button>
+      <button class="cursor-pointer bg-blue-500 hover:bg-blue-600 focus:outline-none rounded text-white text-sm font-medium tracking-wide p-2" type="submit">Reset password</button>
     </p>
   </form>
 </div>
