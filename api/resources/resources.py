@@ -11,11 +11,12 @@ from itsdangerous import URLSafeTimedSerializer, BadSignature, BadTimeSignature,
 from models.users import UserModel
 from models.settings import SettingsModel
 from utils.utils import non_empty_string, non_mail_address, create_id, send_mail
-from utils.mails import send_reset_password_mail
+from utils.mails import send_reset_password_mail, send_confirm_mail
 from app import app, db
 
 
 serializer = URLSafeTimedSerializer(app.config['SECRET_KEY'])
+salt = app.config['SECRET_SALT']
 
 
 class TokenRefreshEndpoint(Resource):
@@ -50,6 +51,11 @@ class SignupEndpoint(Resource):
         user.hash_password()
 
         try:
+            result = send_confirm_mail(user)
+
+            if not result:
+                return {'message': 'Error please try again'}, 500
+
             user.create_user()
 
             return {'message': 'Please check your inbox'}
@@ -68,10 +74,6 @@ class LoginEndpoint(Resource):
 
         super(LoginEndpoint, self).__init__()
 
-    @jwt_required
-    def get(self):
-        return {'message': 'You are logged in as {}'.format(get_jwt_identity())}
-
     def post(self):
         args = self.reqparse.parse_args()
 
@@ -80,6 +82,9 @@ class LoginEndpoint(Resource):
 
             if not user:
                 return {'message': 'Error invalid email or password'}, 401
+
+            if not user.active:
+                return {'message': 'Please confirm your account'}, 403
 
             authorized = user.check_password(args.password)
 
@@ -139,7 +144,6 @@ class ChangePasswordEndpoint(Resource):
 
     def put(self):
         args = self.reqparse.parse_args()
-        salt = app.config['SECRET_SALT']
 
         try:
             email = serializer.loads(args.token, salt=salt, max_age=7200)
@@ -161,6 +165,41 @@ class ChangePasswordEndpoint(Resource):
             user.update_user()
 
             return {'message': 'Successfully updated password'}
+        except Exception as e:
+            raise
+
+
+class ConfirmTokenEndpoint(Resource):
+    def __init__(self):
+        self.reqparse = reqparse.RequestParser(bundle_errors=True)
+
+        self.reqparse.add_argument(
+            'token', type=non_empty_string, required=True, help='No valid token provided', location='json', nullable=False)
+
+        super(ConfirmTokenEndpoint, self).__init__()
+
+    def post(self):
+        args = self.reqparse.parse_args()
+
+        try:
+            email = serializer.loads(args.token, salt=salt, max_age=7200)
+        except SignatureExpired as e:
+            return {'message': 'Token expired contact support'}, 401
+        except BadTimeSignature as e:
+            return {'message': 'Unknown error contact support'}, 400
+        except BadSignature as e:
+            return {'message': 'Invalid token contact support'}, 422
+
+        try:
+            user = UserModel.find_by_email(email)
+
+            if not user:
+                return {'message': 'Email address was not found'}, 404
+
+            user.active = True
+            user.update_user()
+
+            return {'message': 'Successfully activated your account'}
         except Exception as e:
             raise
 
@@ -197,7 +236,7 @@ class SettingsByIdEnpoint(Resource):
         settings = SettingsModel.query.filter_by(id=id).first()
 
         if not settings:
-            return {'message': 'Requested resource was not found'}, 404
+            return {'message': 'Resource settings was not found'}, 404
 
         return {'recipient': settings.recipient,
                 'first_name': settings.first_name,
@@ -230,7 +269,7 @@ class SettingsByIdEnpoint(Resource):
             settings = SettingsModel.query.filter_by(id=id).first()
 
             if not settings:
-                return {'message': 'Requested resource was not found'}, 404
+                return {'message': 'Resource settings was not found'}, 404
 
             settings.recipient = args.recipient
             settings.first_name = args.first_name
@@ -258,7 +297,7 @@ class SettingsByUserIdEnpoint(Resource):
         results = []
 
         if not settings:
-            return {'message': 'Requested resource was not found'}, 404
+            return {'message': 'Resource settings was not found'}, 404
 
         for item in settings:
             results.append({'id': item.id,
