@@ -42,6 +42,7 @@ def custom_expired_token(expired_token):
 api.add_resource(resources.MailEndpoint, '/mail')
 api.add_resource(resources.LoginEndpoint, '/login')
 api.add_resource(resources.SignupEndpoint, '/signup')
+api.add_resource(resources.ResetPasswordEndpoint, '/reset')
 api.add_resource(resources.TokenRefreshEndpoint, '/token/refresh')
 api.add_resource(resources.SettingsByUserIdEnpoint, '/settings/u/<user_id>')
 api.add_resource(resources.SettingsByIdEnpoint, '/settings/i/<id>')

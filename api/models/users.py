@@ -15,6 +15,7 @@ class UserModel(db.Model):
     name = db.Column(db.String(80), nullable=False)
     password = db.Column(db.String(80), nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
+    active = db.Column(db.Boolean, nullable=False, default=False)
     created = db.Column(db.DateTime, default=datetime.utcnow)
     updated = db.Column(db.DateTime)
 

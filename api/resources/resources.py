@@ -10,6 +10,7 @@ from flask_jwt_extended import create_access_token, create_refresh_token, jwt_re
 from models.users import UserModel
 from models.settings import SettingsModel
 from utils.utils import non_empty_string, non_mail_address, create_id, send_mail
+from utils.mails import send_reset_password_mail
 from app import app, db
 
 
@@ -47,7 +48,7 @@ class SignupEndpoint(Resource):
         try:
             user.create_user()
 
-            return {'message': 'You signed up successfully'}
+            return {'message': 'Please check your inbox'}
         except IntegrityError as e:
             return {'message': 'Email address already exists'}, 409
 
@@ -91,6 +92,34 @@ class LoginEndpoint(Resource):
         except Exception as e:
             raise e
             return {'message': 'Error invalid email or password'}, 401
+
+
+class ResetPasswordEndpoint(Resource):
+    def __init__(self):
+        self.reqparse = reqparse.RequestParser(bundle_errors=True)
+
+        self.reqparse.add_argument(
+            'email', type=non_mail_address, required=True, help='No valid email provided', location='json', nullable=False)
+
+        super(ResetPasswordEndpoint, self).__init__()
+
+    def post(self):
+        args = self.reqparse.parse_args()
+
+        try:
+            user = UserModel.find_by_email(args.email)
+
+            if not user:
+                return {'message': 'Email address was not found'}, 404
+
+            result = send_reset_password_mail(user)
+
+            if not result:
+                return {'message': 'Error please try again'}, 500
+
+            return {'message': 'Please check your inbox'}
+        except Exception as e:
+            raise
 
 
 class SettingsByIdEnpoint(Resource):
