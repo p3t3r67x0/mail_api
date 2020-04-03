@@ -16,7 +16,7 @@
         Password
       </label>
       <input name="password" v-model="password" v-bind:class="{'border-red-500': errors.password}" class="appearance-none block w-full bg-gray-200 text-gray-700 border rounded p-3 mb-1 leading-tight focus:outline-none focus:bg-white" id="password"
-        type="password" placeholder="Jane">
+        type="password" placeholder="••••••••">
       <p v-if="errors.password" class="text-red-500 text-xs italic">Please fill out this field.</p>
     </div>
     <p class="text-right">
