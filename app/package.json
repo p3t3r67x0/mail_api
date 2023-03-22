@@ -22,6 +22,6 @@
     "v-click-outside": "^3.0.1"
   },
   "devDependencies": {
-    "@nuxtjs/tailwindcss": "^1.0.0"
+    "@nuxtjs/tailwindcss": "^6.6.4"
   }
 }
